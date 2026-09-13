@@ -3,6 +3,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace CreCraftStudios.HunterReborn.Launcher
@@ -10,7 +11,10 @@ namespace CreCraftStudios.HunterReborn.Launcher
     public partial class Launcher : Form
     {
         private readonly Uri URL = new Uri("http://localhost:81/");
-        Process nginx = new Process();
+
+        private readonly static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Nginx");
+        private readonly string nginxPath = Path.Combine(path, "nginx.exe");
+        private readonly string configPath = Path.Combine(path, "conf", "nginx.conf");
 
         public Launcher()
         {
@@ -22,7 +26,8 @@ namespace CreCraftStudios.HunterReborn.Launcher
 
         private void onNavigating(object? sender, CoreWebView2NavigationStartingEventArgs e)
         {
-            if (!Uri.TryCreate(e.Uri, UriKind.Absolute, out var uri)) {
+            if (!Uri.TryCreate(e.Uri, UriKind.Absolute, out var uri))
+            {
                 e.Cancel = true;
                 return;
             }
@@ -51,17 +56,52 @@ namespace CreCraftStudios.HunterReborn.Launcher
             this.browser.CoreWebView2.Navigate(this.URL.ToString());
         }
 
-        private void InitializeNginx() {
-            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Nginx");
+        private void InitializeNginx()
+        {
+            Process nginx = new Process();
+            nginx.StartInfo.FileName = this.nginxPath;
+            nginx.StartInfo.WorkingDirectory = path;
+            nginx.StartInfo.UseShellExecute = false;
+            nginx.StartInfo.CreateNoWindow = true;
 
-            this.nginx.StartInfo.FileName = Path.Combine(path, "nginx.exe");
-            this.nginx.StartInfo.WorkingDirectory = path;
-            this.nginx.StartInfo.UseShellExecute = false;
-            this.nginx.StartInfo.CreateNoWindow = true;
+            nginx.StartInfo.Arguments = $"-c \"{this.configPath}\"";
 
-            this.nginx.StartInfo.Arguments = $"-c {Path.Combine(path, "conf", "nginx.conf")}";
+            try
+            {
+                nginx.Start();
 
-            this.nginx.Start();
+                nginx.EnableRaisingEvents = true;
+            }
+            catch (Exception err)
+            {
+                MessageBox.Show($"An error has occurred in launching Hunter Reborn Launcher\nPlease relaunch the launcher\n\nError Message: {err.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private async Task StopNginx() {
+            Process stop = new Process();
+
+            stop.StartInfo.FileName = nginxPath;
+            stop.StartInfo.WorkingDirectory = path;
+            stop.StartInfo.UseShellExecute = false;
+            stop.StartInfo.CreateNoWindow = true;
+
+            stop.StartInfo.Arguments = $"-c \"{configPath}\" -s stop";
+
+            try
+            {
+                stop.Start();
+                await stop.WaitForExitAsync();
+            }
+            catch (Exception err) {
+                Debug.WriteLine($"Error when shutting down Nginx.\n\nMessage: {err.Message}");
+            }
+        }
+
+        protected async override void OnFormClosed(FormClosedEventArgs e) { 
+            await this.StopNginx();
+
+            base.OnFormClosed(e);
         }
 
         private void OnWebResourceRequested(object? sender, CoreWebView2WebResourceRequestedEventArgs e)

@@ -1,14 +1,16 @@
 using System;
+using System.IO;
 using System.Windows.Forms;
 using CreCraftStudios.HunterReborn.Launcher.Security.Certificate;
+using Newtonsoft.Json.Linq;
 
 namespace CreCraftStudios.HunterReborn.Launcher
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        public static string HUNTER_WORK_DIR;
+        public static string HUNTER_EXE_DIR;
+
         [STAThread]
         static void Main()
         {
@@ -18,6 +20,26 @@ namespace CreCraftStudios.HunterReborn.Launcher
 
             var certs = Certificate.Generate(root);
             Certificate.Write(certs);
+
+            string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
+
+            JObject? json;
+
+            if (!File.Exists(configPath))
+            {
+                json = Install.Run();
+                if (json == null) {
+                    MessageBox.Show("Failed to locate or load theHunter installed directory", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    Application.Exit();
+                    return;
+                }
+
+                File.WriteAllText(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json"), json.ToString());
+            }
+            else json = JObject.Parse(File.ReadAllText(configPath));
+
+            HUNTER_WORK_DIR = json["workingDir"]!.Value<string>();
+            HUNTER_EXE_DIR = json["exe"]!.Value<string>();
 
             Application.Run(new Launcher());
         }
