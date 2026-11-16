@@ -32,7 +32,7 @@ The launcher also provides access to the Hunter Reborn website, which is built u
 
 Before using Hunter Reborn, you'll need a compatible installation of theHunter Classic.
 
-Please follow the instructions in **[SETUP.md](SETUP.md)** for a step-by-step installation guide.
+Please follow the instructions in **[SETUP](SETUP.md)** for a step-by-step installation guide.
 
 The guide covers:
 
