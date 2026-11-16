@@ -6,7 +6,7 @@ Hunter Reborn is a community-driven preservation project dedicated to keeping **
 
 The project aims to recreate the original online experience through replacement server infrastructure, allowing players to continue enjoying the game beyond the lifespan of its official services.
 
-<badge color="warning">Early Access</badge>
+**Early Access**
 
 **Hunter Reborn is currently in Early Access.** Development is ongoing, and not all features and functionality from the original game have been restored. Players may encounter bugs, incomplete features, and unexpected issues.
 
