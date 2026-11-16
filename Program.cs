@@ -23,11 +23,14 @@ namespace CreCraftStudios.HunterReborn.Launcher
 
             string configPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "config.json");
 
-            JObject? json;
+            JObject? json=null;
 
             if (!File.Exists(configPath))
             {
-                json = Install.Run();
+                //json = Install.Run();
+
+                new Setup(r => { json = r; });
+
                 if (json == null) {
                     MessageBox.Show("Failed to locate or load theHunter installed directory", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     Application.Exit();

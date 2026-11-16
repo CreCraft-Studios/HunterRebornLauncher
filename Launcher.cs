@@ -1,5 +1,7 @@
 using Microsoft.Web.WebView2.Core;
+using Microsoft.Web.WebView2.WinForms;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -10,18 +12,29 @@ namespace CreCraftStudios.HunterReborn.Launcher
 {
     public partial class Launcher : Form
     {
-        private readonly Uri URL = new Uri("http://localhost:81/");
+        private static WebView2 browserInstance;
+
+        private readonly Uri LANDING_URL = new Uri("https://hunterreborn.crecraftstudios.com");
 
         private readonly static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Nginx");
         private readonly string nginxPath = Path.Combine(path, "nginx.exe");
         private readonly string configPath = Path.Combine(path, "conf", "nginx.conf");
 
+        private readonly Settings settings;
+
         public Launcher()
         {
             InitializeComponent();
 
+            this.settings = new();
+
             this.InitializeWebView();
             this.InitializeNginx();
+            browserInstance = this.browser;
+        }
+
+        public static WebView2 GetBrowser() {
+            return browserInstance;
         }
 
         private void onNavigating(object? sender, CoreWebView2NavigationStartingEventArgs e)
@@ -35,8 +48,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
             if (uri.Scheme.Equals(Uri.UriSchemeFile, StringComparison.OrdinalIgnoreCase))
                 return;
 
-            if (!uri.Host.Equals(this.URL.Host, StringComparison.OrdinalIgnoreCase))
-                e.Cancel = true;
+            var auth = uri.GetLeftPart(UriPartial.Authority);
         }
 
         private async void InitializeWebView()
@@ -47,13 +59,15 @@ namespace CreCraftStudios.HunterReborn.Launcher
             this.browser.CoreWebView2.Navigate(new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "splash.html")).AbsoluteUri);
 
             Game game = new Game();
+            Settings.JS settingsJS = new();
             this.browser.CoreWebView2.AddHostObjectToScript("GameSession", game);
+            this.browser.CoreWebView2.AddHostObjectToScript("GameSettings", settingsJS);
 
             this.browser.CoreWebView2.AddWebResourceRequestedFilter("*launcher.js", CoreWebView2WebResourceContext.Script);
 
             this.browser.CoreWebView2.WebResourceRequested += OnWebResourceRequested;
             this.browser.CoreWebView2.NavigationStarting += onNavigating;
-            this.browser.CoreWebView2.Navigate(this.URL.ToString());
+            this.browser.CoreWebView2.Navigate(this.LANDING_URL.ToString());
         }
 
         private void InitializeNginx()
@@ -110,7 +124,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
                 return;
 
             string javascript = """
-                   $LAUNCHER = (function(){
+                   LAUNCHER = (function(){
 
                     function openHuntMenu() {
                         const selected = document.querySelector(".menu-selected");
@@ -135,11 +149,15 @@ namespace CreCraftStudios.HunterReborn.Launcher
                         if (!isLauncher())
                             return;
 
-                            const json = await chrome.webview.hostObjects.GameSession.CreateSession($HUNT.game.type, $HUNT.game.start_time, $HUNT.game.location, $HUNT.game.reserve);
+                            const json = await chrome.webview.hostObjects.GameSession.CreateSession(HUNT.game.type, HUNT.game.start_time, HUNT.game.location, HUNT.game.reserve);
+
+                            if (json=="")
+                                return;
                      
                             const result = JSON.parse(json);
                             if (!result.success) {
                                 alert('There was an error with the server. Please try again later');
+                                console.log(json);
                                 return;
                             }
 

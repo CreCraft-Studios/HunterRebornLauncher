@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace CreCraftStudios.HunterReborn.Launcher
 {
@@ -12,11 +14,16 @@ namespace CreCraftStudios.HunterReborn.Launcher
     {
 
         public async Task<string> CreateSession(string type, int startTime, int location, int _reserve) {
+            Process[] pros = Process.GetProcessesByName("theHunter");
+            if (pros.Length > 0) {
+                MessageBox.Show("theHunter game is currently running.\nIf you wish to start a new hun,\nend your current session then try again.", "Hunter Reborn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return "";
+            }
+
             HttpClient client = new HttpClient();
 
             var data = new Dictionary<string, string>
             {
-                ["oauth_access_token"] = "abc",
                 ["start"] = location.ToString(),
                 ["loctype"] = type,
                 ["reserve"] = _reserve.ToString(),
@@ -26,10 +33,20 @@ namespace CreCraftStudios.HunterReborn.Launcher
 
             try
             {
-                var response = await client.PostAsync("http://localhost:82/v1/Launch/start", new FormUrlEncodedContent(data));
+                var cookies = await Launcher.GetBrowser().CoreWebView2.CookieManager.GetCookiesAsync("https://api-hr.crecraftstudios.com");
+                var cookie = cookies.FirstOrDefault(c => c.Name == "hr_ses_t");
+
+                if (cookie == null)
+                    throw new InvalidOperationException("No auth cookie found");
+
+                using var request = new HttpRequestMessage(HttpMethod.Post, "https://api-hr.crecraftstudios.com/v1/Launch/start");
+                request.Content = new FormUrlEncodedContent(data);
+                request.Headers.Add("Cookie", $"hr_ses_t={cookie.Value}");
+
+                var response = await client.SendAsync(request);
                 response.EnsureSuccessStatusCode();
 
-                StartGameResult result = await response.Content.ReadFromJsonAsync<StartGameResult>();
+                StartGameResult result = await response.Content.ReadFromJsonAsync<StartGameResult>() ?? throw new InvalidOperationException("Empty server response");
                 result.success = true;
                 return JsonSerializer.Serialize(result);
             }
