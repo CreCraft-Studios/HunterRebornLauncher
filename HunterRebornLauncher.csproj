@@ -12,11 +12,13 @@
     <Authors>CreCraft Studios</Authors>
     <Company>CreCraft Studios</Company>
     <Copyright>(C) Copyright, CreCraft Studios</Copyright>
-    <Version>0.1.0</Version>
-    <AssemblyVersion>0.1.0</AssemblyVersion>
-    <FileVersion>0.1.0</FileVersion>
+    <Version>1.0.1</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
     <NeutralLanguage>en-AU</NeutralLanguage>
     <SupportedOSPlatformVersion>7.0</SupportedOSPlatformVersion>
+	  <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
+	  <ApplicationIcon>hunter reborn logo.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
@@ -39,6 +41,7 @@
 	  <None Include="Third-party Licenses\**\*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <Content Include="hunter reborn logo.ico" />
 
 	  <None Update="Nginx\temp\**\*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -51,6 +54,20 @@
 	  <None Update="Nginx\logs\**\*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)' == 'Debug'">
+	<None Update="Configs/debug.conf">
+		<TargetPath>Nginx/conf/nginx.conf</TargetPath>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
+  </ItemGroup>
+  
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+	<None Update="Configs/release.conf">
+		<TargetPath>Nginx/conf/nginx.conf</TargetPath>
+		<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	</None>
   </ItemGroup>
 
 </Project>

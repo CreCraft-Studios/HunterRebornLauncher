@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,7 +15,11 @@ namespace CreCraftStudios.HunterReborn.Launcher
     {
         private static WebView2 browserInstance;
 
+#if DEBUG
+        private readonly Uri LANDING_URL = new Uri("http://localhost:81");
+#else
         private readonly Uri LANDING_URL = new Uri("https://hunterreborn.crecraftstudios.com");
+#endif
 
         private readonly static string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Nginx");
         private readonly string nginxPath = Path.Combine(path, "nginx.exe");
@@ -54,7 +59,46 @@ namespace CreCraftStudios.HunterReborn.Launcher
         private async void InitializeWebView()
         {
             await this.browser.EnsureCoreWebView2Async();
+
+#if DEBUG
+            this.browser.CoreWebView2.Settings.AreDevToolsEnabled = true;
+#else
+            this.browser.CoreWebView2.Settings.AreDevToolsEnabled = false;
+#endif
+
             this.browser.CoreWebView2.Settings.IsStatusBarEnabled = false;
+
+            string version = typeof(Program).Assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()!.InformationalVersion;
+            string[] vSplit = version.Split('.');
+
+            await this.browser.CoreWebView2.AddScriptToExecuteOnDocumentCreatedAsync($$"""
+                window.HunterReborn = {
+                    launcherVersion: {
+                        major: {{int.Parse(vSplit[0])}},
+                        minor: {{int.Parse(vSplit[1])}},
+                        patch: {{int.Parse(vSplit[2])}}
+                    },
+                    isVersionLower: function(currentVersion, checkAgainst) {
+                        return (currentVersion.major < checkAgainst.major
+                        || (currentVersion.major == checkAgainst.major && currentVersion.minor < checkAgainst.minor)
+                        || (currentVersion.major == checkAgainst.major && currentVersion.minor == checkAgainst.minor && currentVersion.patch < checkAgainst.patch));
+                    },
+                    isLauncherOutdated: function() {
+                        if (typeof HunterReborn.getLatestClientVersion !== "function")
+                            return false;
+
+                        return HunterReborn.isVersionLower(HunterReborn.launcherVersion, HunterReborn.getLatestClientVersion());
+                    },
+                    isUpdateRequired: function() {
+                        if (typeof HunterReborn.getMinimumSupportedVersion !== "function")
+                            return false;
+
+                        const minVersion = HunterReborn.getMinimumSupportedVersion();
+                        return HunterReborn.isVersionLower(HunterReborn.launcherVersion, minVersion);
+                    }
+                };
+                """);
+
 
             this.browser.CoreWebView2.Navigate(new Uri(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "splash.html")).AbsoluteUri);
 

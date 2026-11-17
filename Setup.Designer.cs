@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Setup));
             txtExeLocation = new System.Windows.Forms.TextBox();
             label1 = new System.Windows.Forms.Label();
             btnBrowse = new System.Windows.Forms.Button();
@@ -79,6 +80,7 @@
             Controls.Add(btnBrowse);
             Controls.Add(label1);
             Controls.Add(txtExeLocation);
+            Icon = (System.Drawing.Icon)resources.GetObject("$this.Icon");
             Name = "Setup";
             Text = "Hunter Reborn Setup";
             ResumeLayout(false);

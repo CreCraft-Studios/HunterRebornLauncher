@@ -32,6 +32,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Launcher));
             browser = new Microsoft.Web.WebView2.WinForms.WebView2();
             ((System.ComponentModel.ISupportInitialize)browser).BeginInit();
             SuspendLayout();
@@ -54,6 +55,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1284, 861);
             Controls.Add(browser);
+            Icon = (Icon)resources.GetObject("$this.Icon");
             MinimumSize = new Size(1300, 200);
             Name = "Launcher";
             Text = "Hunter Reborn";

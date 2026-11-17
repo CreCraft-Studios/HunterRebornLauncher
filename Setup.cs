@@ -55,18 +55,25 @@ namespace CreCraftStudios.HunterReborn.Launcher
                 ["exe"] = filePath
             };
 
-            string version = Path.Combine(Path.GetDirectoryName(filePath), "version");
-            JObject j = JObject.Parse(version);
+            string versionPath = Path.Combine(Path.GetDirectoryName(filePath), "version");
+            if (File.Exists(versionPath))
+            {
 
-            if (j.ContainsKey("game_version")) {
-                if ((int)j["game_version"] > 2026081804)
+                string version = File.ReadAllText(versionPath);
+                JObject j = JObject.Parse(version);
+
+                if (j.ContainsKey("game_version"))
                 {
-                    MessageBox.Show("Oh No!\nIt appears you're using a newer version that what Hunter Reborn currently supports.\nPlease read the setup guide on how to download the required version from steam", "Version not supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                else if ((int)j["game_version"] < 2026081804) {
-                    MessageBox.Show("Oh No!\nIt appears you're using an older version that what Hunter Reborn currently supports.\nPlease read the setup guide on how to download the required version from steam", "Version not supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
+                    if ((int)j["game_version"] > 2026081804)
+                    {
+                        MessageBox.Show("Oh No!\nIt appears you're using a newer version that what Hunter Reborn currently supports.\nPlease read the setup guide on how to download the required version from steam", "Version not supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+                    else if ((int)j["game_version"] < 2026081804)
+                    {
+                        MessageBox.Show("Oh No!\nIt appears you're using an older version that what Hunter Reborn currently supports.\nPlease read the setup guide on how to download the required version from steam", "Version not supported", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
                 }
             }
 

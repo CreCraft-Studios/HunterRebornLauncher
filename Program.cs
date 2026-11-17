@@ -27,8 +27,6 @@ namespace CreCraftStudios.HunterReborn.Launcher
 
             if (!File.Exists(configPath))
             {
-                //json = Install.Run();
-
                 new Setup(r => { json = r; });
 
                 if (json == null) {
