@@ -1,7 +1,5 @@
 ﻿# Hunter Reborn
 
-**Keeping the hunt alive.**
-
 Hunter Reborn is a community-driven preservation project dedicated to keeping **theHunter Classic** alive following the shutdown of its official servers on 11 November 2026.
 
 The project aims to recreate the original online experience through replacement server infrastructure, allowing players to continue enjoying the game beyond the lifespan of its official services.
@@ -67,4 +65,4 @@ All original theHunter Classic assets, trademarks, and intellectual property rem
 
 ---
 
-*Keeping the hunt alive.*
+*Keep the hunt alive.*
