@@ -1,11 +1,17 @@
-﻿using Newtonsoft.Json.Linq;
+﻿// Copyright (C) 2026 CreCraft Studios
+//
+// This file is part of Hunter Reborn Launcher.
+//
+// Hunter Reborn Launcher is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed WITHOUT ANY WARRANTY.
+// See the LICENSE file for details.
+
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Text.Json.Nodes;
 using System.Windows.Forms;
 
@@ -13,9 +19,9 @@ namespace CreCraftStudios.HunterReborn.Launcher
 {
     public partial class Setup : Form
     {
-        Action<JObject> callback;
+        Action<JsonObject> callback;
 
-        public Setup(Action<JObject> callback)
+        public Setup(Action<JsonObject> callback)
         {
             InitializeComponent();
             this.callback = callback;
@@ -48,8 +54,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
                 return;
             }
 
-
-            JObject json = new JObject
+            JsonObject json = new JsonObject
             {
                 ["workingDir"] = Path.GetDirectoryName(filePath),
                 ["exe"] = filePath
@@ -60,7 +65,7 @@ namespace CreCraftStudios.HunterReborn.Launcher
             {
 
                 string version = File.ReadAllText(versionPath);
-                JObject j = JObject.Parse(version);
+                JsonObject j = JsonNode.Parse(version)!.AsObject();
 
                 if (j.ContainsKey("game_version"))
                 {

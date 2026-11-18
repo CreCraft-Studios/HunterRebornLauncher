@@ -1,7 +1,17 @@
-﻿using System;
+﻿// Copyright (C) 2026 CreCraft Studios
+//
+// This file is part of Hunter Reborn Launcher.
+//
+// Hunter Reborn Launcher is free software: you can redistribute it
+// and/or modify it under the terms of the GNU General Public License
+// as published by the Free Software Foundation, either version 3
+// of the License, or (at your option) any later version.
+//
+// This program is distributed WITHOUT ANY WARRANTY.
+// See the LICENSE file for details.
+
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace CreCraftStudios.HunterReborn.Launcher
 {

@@ -12,7 +12,7 @@
     <Authors>CreCraft Studios</Authors>
     <Company>CreCraft Studios</Company>
     <Copyright>(C) Copyright, CreCraft Studios</Copyright>
-    <Version>1.0.1</Version>
+    <Version>1.1.0</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <NeutralLanguage>en-AU</NeutralLanguage>
@@ -22,9 +22,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4191.47" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
-    <PackageReference Include="ValveKeyValue" Version="0.70.0.499" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.4314.35" />
   </ItemGroup>
 
   <ItemGroup>
@@ -41,6 +39,10 @@
 	  <None Include="Third-party Licenses\**\*">
 		  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
+	  <None Remove="Executables\MicrosoftEdgeWebview2Setup.exe" />
+	  <Content Include="Executables\MicrosoftEdgeWebview2Setup.exe">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </Content>
 	  <Content Include="hunter reborn logo.ico" />
 
 	  <None Update="Nginx\temp\**\*">

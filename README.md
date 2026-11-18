@@ -63,7 +63,19 @@ Hunter Reborn is not affiliated with, endorsed by, or officially associated with
 
 All original theHunter Classic assets, trademarks, and intellectual property remain the property of their respective owners.
 
+## License
+
+Hunter Reborn Launcher is free and open-source software licensed under the GNU General Public License v3.0 or later (GPL-3.0-or-later).
+
+You are free to use, modify, and redistribute this software under the terms of the license.
+
+A copy of the GNU General Public License is included in the LICENSE file. You can also read it at https://www.gnu.org/licenses/gpl-3.0.html.
+
+Copyright (C) 2026 CreCraft Studios.
+
 ## Third-party Acknowledgements
+
+This product contains software provided by Microsoft Corporation.
 
 This product contains software provided by NGINX, Inc. and its contributors.
 
@@ -76,10 +88,6 @@ This product includes software written by Tim Hudson (tjh@cryptsoft.com).
 This product contains software (PCRE) developed by the University of Cambridge, Zoltan Herczeg and Google Inc.
 
 This product contains software (zlib) developed by Jean-loup Gailly and Mark Adler.
-
-This product contains software (Newtonsoft.Json) developed by James Newton-King.
-
-This product contains software (ValveKeyValue) developed by the ValveKeyValue Contributors.
 
 Full copyright notices and licence terms are provided in the Third-party licenses directory.
 
